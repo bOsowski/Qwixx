@@ -32,7 +32,7 @@ void Player::moveAsActivePlayer(const vector<Die*>& const dice, vector<Player*>&
 					players.at(i)->attemptCommonMove(dice, players);
 				}
 				else {
-					AIcommonMove(dice, players);
+					players.at(i)->AIcommonMove(dice, players);
 				}
 				
 			}
