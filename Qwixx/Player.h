@@ -17,14 +17,18 @@ class Player
 	short m_misthrows = 0;
 	friend ostream& operator<<(ostream& os, const Player& player);
 	bool crossOutNumber(const int & numberToCrossOut, const unsigned short & row, const vector<Die*>& const dice, vector<Player*>& players);
+	bool m_isHuman;
 
 public:
+	bool& isHuman();
 	bool operator > (const Player& other) const;	//overriding the > operator to allow for sorting with the algorithm library
-	Player(const string& name);
+	Player(const string& name, bool& isHuman);
 	~Player();
 	void moveAsActivePlayer(const vector<Die*>& const dice, vector<Player*>& players);
 	bool attemptCommonMove(const vector<Die*>& const dice, vector<Player*>& players);
 	bool attemptSecondaryMove(const vector<Die*>& const dice, vector<Player*>& players);
+	bool AIcommonMove(const vector<Die*>& const dice, vector<Player*>& players);
+	bool AIsecondaryMove(const vector<Die*>& const dice, vector<Player*>& players);
 	Card& getCard();
 	short& getMisthrows();
 	string& getName();

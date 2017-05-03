@@ -76,10 +76,20 @@ int startUp(vector<Player*>& players) {
 	} while (numberOfPlayers < 2 || numberOfPlayers > 5);
 
 	for (unsigned short i = 0; i < numberOfPlayers; i++) {
-		cout << "Enter player " << i+1 << "'s name>> ";
+		cout << "Enter player " << i+1 << "'s name (no spaces) >> ";
 		string name;
 		cin >> name;
-		players.push_back(new Player(name));
+		cout << "Is the player human? (y/n) >> ";
+		string ynQuestion;
+		cin >> ynQuestion;
+		bool isHuman;
+		if (ynQuestion.at(0) == 'y' || ynQuestion.at(0) == 'Y') {
+			isHuman = true;
+		}
+		else {
+			isHuman = false;
+		}
+		players.push_back(new Player(name, isHuman));
 	}
 
 	//print out the players

@@ -13,21 +13,43 @@ void Player::moveAsActivePlayer(const vector<Die*>& const dice, vector<Player*>&
 				dice.at(i)->throwDie();
 			}
 		}
+		bool firstMoveAttempted;
 
-		bool firstMoveAttempted = attemptCommonMove(dice, players);
+		if (isHuman()) {
+			firstMoveAttempted = attemptCommonMove(dice, players);
+		}
+		else {
+			firstMoveAttempted = AIcommonMove(dice, players);
+		}
+
 
 		//ask other players to perform their passive move..
 		for (unsigned short i = 0; i < players.size(); i++) {
 			if (players.at(i) != this) {
-
-				cout << string(50, '\n');
-				cout << "Player "<<players.at(i)->m_name<<endl<<endl;
-				players.at(i)->attemptCommonMove(dice, players);
+					cout << string(50, '\n');
+					cout << "Player " << players.at(i)->m_name << endl << endl;
+				if (players.at(i)->isHuman()) {
+					players.at(i)->attemptCommonMove(dice, players);
+				}
+				else {
+					AIcommonMove(dice, players);
+				}
+				
 			}
 		}
 
+
+
+		bool secondMoveAttempted;
 		cout << string(50, '\n');
-		bool secondMoveAttempted = attemptSecondaryMove(dice, players);
+
+		if (isHuman()) {
+			secondMoveAttempted = attemptSecondaryMove(dice, players);
+		}
+		else {
+			secondMoveAttempted = AIsecondaryMove(dice, players);
+		}
+
 
 
 		//if the player didn't use any of his moves, increment his misthrow
@@ -116,6 +138,38 @@ reChooseSecondDie:
 
 }
 
+//attempts a random move 100 times. If a random move within those 100 times can't be made, return false.
+bool Player::AIsecondaryMove(const vector<Die*>& const dice, vector<Player*>& players)
+{
+	cout << "I'm now attempting AIsecondaryMove\n";
+	for (int i = 0; i < 100; i++) {
+		int firstDice = (rand() % 2);
+		int colourDice = (rand() % 4 + 2);
+		if (crossOutNumber(dice.at(firstDice)->getOutput() + dice.at(colourDice)->getOutput(), dice.at(colourDice)->getColour(), dice, players)) {
+			cout << "I've made a move.\n";
+			return true;
+		}
+	}
+	cout << "I will pass human..\n\n";
+	return false;
+}
+
+//same logic as the AIsecondaryMove but choosing the row instead of the dice.
+bool Player::AIcommonMove(const vector<Die*>& const dice, vector<Player*>& players)
+{
+	cout << "I'm now attempting AIcommonMove\n";
+	for (int i = 0; i < 100; i++) {
+		int rowToCrossOut = (rand() % 4);
+		if (crossOutNumber(dice.at(0)->getOutput() + dice.at(1)->getOutput(), rowToCrossOut, dice, players)) {
+			cout << "I've made a move.\n";
+			return true;
+		}
+	}
+	cout << "I will pass human..\n\n";
+	return false;
+}
+
+
 Card& Player::getCard()
 {
 	return card;
@@ -199,13 +253,20 @@ bool Player::crossOutNumber(const int & numberToCrossOut, const unsigned short &
 	}
 }
 
+bool& Player::isHuman()
+{
+	return m_isHuman;
+}
+
 bool Player::operator> (const Player & other) const
 {
 	return (totalScore > other.totalScore);
 }
 
-Player::Player(const string & name)
+
+Player::Player(const string & name, bool& isHuman)
 {
+	m_isHuman = isHuman;
 	m_name = name;
 }
 
